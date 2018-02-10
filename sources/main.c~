@@ -6,7 +6,7 @@
 /*   By: smaddux <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/09 19:40:19 by smaddux           #+#    #+#             */
-/*   Updated: 2018/02/09 20:42:00 by smaddux          ###   ########.fr       */
+/*   Updated: 2018/02/09 20:15:08 by smaddux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,14 +78,14 @@ t_list *oprd (void)
 	return (zoast);
 }
 
-void beginparse(int argc, char *argv[]) 
-{ 
-	int argcount; 
-	argcount = argc - 1; 
+/* void beginparse(int argc, char *argv[]) */
+/* { */
+/* 	int argcount; */
+/* 	argcount = argc - 1; */
 
 	
 
-} 
+/* } */
 
 int main(int argc, char *argv[])
 {
