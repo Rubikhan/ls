@@ -1,0 +1,36 @@
+start with '-R' then '-l' then '-a' 
+
+'ls -' vs 'ls --' vs 'ls ---'
+
+man dir
+
+     struct dirent { /* when _DARWIN_FEATURE_64_BIT_INODE is defined */
+             ino_t      d_fileno;     /* file number of entry */
+             __uint64_t d_seekoff;    /* seek offset (optional, used by servers) */
+             __uint16_t d_reclen;     /* length of this record */
+             __uint16_t d_namlen;     /* length of string in d_name */
+             __uint8_t  d_type;       /* file type, see below */
+             char    d_name[1024];    /* name must be no longer than this */
+     };
+
+man 2 stat
+
+     struct stat { /* when _DARWIN_FEATURE_64_BIT_INODE is NOT defined */
+         dev_t    st_dev;    /* device inode resides on */
+         ino_t    st_ino;    /* inode's number */
+         mode_t   st_mode;   /* inode protection mode */
+         nlink_t  st_nlink;  /* number of hard links to the file */
+         uid_t    st_uid;    /* user-id of owner */
+         gid_t    st_gid;    /* group-id of owner */
+         dev_t    st_rdev;   /* device type, for special file inode */
+         struct timespec st_atimespec;  /* time of last access */
+         struct timespec st_mtimespec;  /* time of last data modification */
+         struct timespec st_ctimespec;  /* time of last file status change */
+         off_t    st_size;   /* file size, in bytes */
+         quad_t   st_blocks; /* blocks allocated for file */
+         u_long   st_blksize;/* optimal file sys I/O ops blocksize */
+         u_long   st_flags;  /* user defined flags for file */
+         u_long   st_gen;    /* file generation number */
+     };
+
+
