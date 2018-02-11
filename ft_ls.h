@@ -6,7 +6,7 @@
 /*   By: smaddux <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/04 22:51:21 by smaddux           #+#    #+#             */
-/*   Updated: 2018/02/10 18:22:02 by smaddux          ###   ########.fr       */
+/*   Updated: 2018/02/10 19:22:00 by smaddux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,5 +33,12 @@ typedef struct		s_sopts
 	int longoutput;
 	int time;
 }					t_sopts;
+
+int	ft_getopt1(int argc, char *argv[], char *soptstring);
+int ft_getopt2(int argc, char *argv[], char *soptstring);
+t_sopts *assignsopts(int c, t_sopts *sopts);
+t_sopts *soptszero(t_sopts *sopts);
+
+int soptind;
 
 # endif
