@@ -6,7 +6,7 @@
 #    By: smaddux <marvin@42.fr>                     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/12/17 23:18:19 by smaddux           #+#    #+#              #
-#    Updated: 2018/02/08 19:25:41 by smaddux          ###   ########.fr        #
+#    Updated: 2018/02/10 18:43:21 by smaddux          ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
@@ -30,7 +30,7 @@ $(NAME): $(OBJ)
 				gcc $(OBJ) -L libft -lft -o $(NAME)
 
 $(OBJ): $(SRCDIR)
-				gcc $(WOPS) -c $(SRCDIR) -I fs_ls.h 
+				gcc $(WOPS) -c $(SRCDIR) -I fs_ls.h
 
 clean:
 				make -C ./libft/ clean

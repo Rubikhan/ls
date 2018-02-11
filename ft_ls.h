@@ -6,7 +6,7 @@
 /*   By: smaddux <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/04 22:51:21 by smaddux           #+#    #+#             */
-/*   Updated: 2018/02/06 23:01:32 by smaddux          ###   ########.fr       */
+/*   Updated: 2018/02/10 18:22:02 by smaddux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,5 +25,13 @@
 # include <stdio.h>
 # include "./libft/libft.h"
 
+typedef struct		s_sopts
+{
+	int	recursion;
+	int reverse;
+	int all;
+	int longoutput;
+	int time;
+}					t_sopts;
 
 # endif

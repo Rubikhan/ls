@@ -6,11 +6,66 @@
 /*   By: smaddux <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/09 19:40:19 by smaddux           #+#    #+#             */
-/*   Updated: 2018/02/09 20:42:00 by smaddux          ###   ########.fr       */
+/*   Updated: 2018/02/10 18:40:29 by smaddux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../ft_ls.h"
+
+int soptind;
+static char *soptcursor = NULL; //idk
+
+//#############
+char* soptarg;
+//############
+
+int ft_getopt2(int argc, char *argv[], char *soptstring)
+{
+	int soptchar;
+	const char*  soptdecl = NULL;
+	
+	argc++;
+	soptchar = -1; //don't think this is necessary
+	if (soptcursor == NULL || *soptcursor == '\0')
+		soptcursor = argv[soptind] + 1;
+	soptchar = *soptcursor;
+	soptdecl = ft_strchr(soptstring, soptchar);
+	if (soptdecl) 
+	{
+		;
+	}
+	else
+		soptchar = '?';
+ 	if (soptcursor == NULL || *++soptcursor == '\0') //? 
+ 		++soptind; 
+	return (soptchar);
+}
+
+int	ft_getopt1(int argc, char *argv[], char *soptstring)
+{
+	int bool;
+
+	bool = 0;
+	if (soptind >= argc)
+		bool = 1;
+	else if (argv[soptind] == NULL)
+		bool = 1;
+	else if (*argv[soptind] != '-')
+		bool = 1;
+	else if (ft_strcmp(argv[soptind], "-") == 0)
+		bool = 1;
+	else if (ft_strcmp(argv[soptind], "--") == 0 && bool == 0)
+	{
+		++soptind;
+		bool = 1;
+	}
+	if (bool == 1)
+	{
+		soptcursor = NULL;
+		return (-1);
+	}
+	return (ft_getopt2(argc, argv, soptstring));
+}
 
 void insrt( t_list **zoast, t_list *temp, char *dname)
 {
@@ -78,23 +133,60 @@ t_list *oprd (void)
 	return (zoast);
 }
 
-void beginparse(int argc, char *argv[]) 
-{ 
-	int argcount; 
-	argcount = argc - 1; 
+t_sopts *assignsopts(int c, t_sopts *sopts)
+{
+	if (c == 'R')
+		sopts->recursion = 1;
+	else if (c == 'r')
+		sopts->reverse = 1;
+	else if (c == 'a')
+		sopts->all = 1;
+	else if (c == 'l')
+		sopts->longoutput = 1;
+	else if (c == 't')
+		sopts->time = 1;
+	return (sopts);
+}
 
-	
-
-} 
+t_sopts *soptszero(t_sopts *sopts)
+{
+	sopts->recursion = 0;
+	sopts->reverse = 0;
+	sopts->all = 0;
+	sopts->longoutput = 0;
+	sopts->time = 0;
+	return (sopts);
+}
 
 int main(int argc, char *argv[])
 {
-    
     t_list *zoast;
-
-	argc++;
-	argv++;
+	t_sopts *sopts;
+	int c;
+	soptind = 1;
 	
+	sopts = malloc(sizeof(t_sopts*) * (2));
+
+	sopts = soptszero(sopts);
+
+	while ((c = ft_getopt1(argc, argv, "rltaR")) != -1)
+	{
+		if (c == '?')
+		{
+			ft_putstr("ls: illegal option\n");
+			ft_putstr("usage: ls [-Ralrt]\n");
+			exit(-1);
+		}
+		else
+			sopts = assignsopts(c, sopts);
+	}
+	
+	printf("R:%d\n", sopts->recursion);
+	printf("r:%d\n", sopts->reverse);
+	printf("a:%d\n", sopts->all);
+	printf("l:%d\n", sopts->longoutput);
+	printf("t:%d\n", sopts->time);
+
 	zoast = oprd();
 
     while (zoast->next)
