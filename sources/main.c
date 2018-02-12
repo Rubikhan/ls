@@ -6,7 +6,7 @@
 /*   By: smaddux <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/09 19:40:19 by smaddux           #+#    #+#             */
-/*   Updated: 2018/02/10 19:28:09 by smaddux          ###   ########.fr       */
+/*   Updated: 2018/02/12 13:56:45 by smaddux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 void insrt( t_list **zoast, t_list *temp, char *dname)
 {
     t_list *current;
-    temp = ft_lstnew(dname, ft_strlen(dname) + 1); //not sure if I need the +1
+    temp = ft_lstnew(dname, ft_strlen(dname) + 1); //not sure if I need the +1 //FREE THIS
     if (ft_strcmp((*zoast)->content, temp->content) > 0)
     {
         temp->next = *zoast;
@@ -53,17 +53,9 @@ t_list *oprd (void)
 
     while ((b = readdir(a)) != NULL)
     {
-//      if (ft_strcmp(b->d_name, ".") == 0 || ft_strcmp(b->d_name, "..") == 0)
-//          ;
-//      else if (b->d_name[0] == '.')
-//          ;
-//      else
-//        printf("%s\n", b->d_name);
         stat((const char*)b->d_name, &s);
-//      printf("%x\n", s.st_mode);
-        if ((s.st_mode & S_IFDIR) == S_IFDIR)
+        if ((s.st_mode & S_IFMT) == S_IFDIR) //worked too with & S_IFDIR
 			;
-			//          printf("directory?\n");
         if (bool == 0)
         {
             bool = 1;
@@ -72,9 +64,9 @@ t_list *oprd (void)
         else
         {
             insrt(&zoast, temp, (char*)b->d_name);
-//          ft_lstadd(&zoast, temp);
         }
     }
+	closedir(a);
 	return (zoast);
 }
 
@@ -87,6 +79,41 @@ void printsopts(t_sopts *sopts)
 	printf("t:%d\n", sopts->time);
 }
 
+void rhelper(char *name, char *another)
+{
+	struct stat buffer;
+
+	stat((const char*)name, &buffer);
+	if ((buffer.st_mode & S_IFMT) == S_IFDIR)
+	{
+		name = ft_strjoin(name, "/");
+		name = ft_strjoin(name, another);
+		ft_dirwalk(name, rhelper);
+	}
+	printf("%s\n", name);
+}
+
+void ft_dirwalk(char *dir, void(*f)(char *, char *))
+{
+	struct dirent *sdp;
+	void *hmm;
+
+	if ((hmm = opendir(dir)) == NULL)
+	{
+		return;
+	}
+	while ((sdp = readdir(hmm)) != NULL)
+	{
+		if (ft_strcmp(sdp->d_name, ".") == 0 || ft_strcmp(sdp->d_name, "..") == 0)
+			continue;
+		else 
+		{
+			f(dir, sdp->d_name);
+		}
+	}
+	closedir(hmm);
+}
+
 int main(int argc, char *argv[])
 {
     t_list *zoast;
@@ -94,7 +121,7 @@ int main(int argc, char *argv[])
 	int c;
 
 	soptind = 1;
-	sopts = malloc(sizeof(t_sopts*) * (2));
+	sopts = malloc(sizeof(t_sopts*) * (2)); //FREE THIS
 	sopts = soptszero(sopts);
 
 	while ((c = ft_getopt1(argc, argv, "rltaR")) != -1)
@@ -108,16 +135,17 @@ int main(int argc, char *argv[])
 		else
 			sopts = assignsopts(c, sopts);
 	}
-
-	printf("%s\n", argv[soptind]);
 	printsopts(sopts);
 	zoast = oprd();
-
     while (zoast->next)
     {
         printf("%s\n", zoast->content);
         zoast = zoast->next;
     }
+	if (sopts->recursion == 1)
+	{
+		ft_dirwalk(".", rhelper);
+	}
     printf("%s\n", zoast->content);
     return (26);
 }
