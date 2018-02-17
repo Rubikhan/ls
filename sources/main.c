@@ -6,11 +6,78 @@
 /*   By: smaddux <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/09 19:40:19 by smaddux           #+#    #+#             */
-/*   Updated: 2018/02/12 19:58:12 by smaddux          ###   ########.fr       */
+/*   Updated: 2018/02/16 21:57:16 by smaddux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../ft_ls.h"
+
+//set  value with "x = & S_IFMT" and u can use it later"
+
+void lfiletype(struct stat statbuf)
+{
+	if (statbuf.st_mode & S_IFREG)
+		printf("-");
+	else if (statbuf.st_mode & S_IFIFO)
+		printf("p");
+	else if (statbuf.st_mode & S_IFCHR)
+		printf("c");
+	else if (statbuf.st_mode & S_IFDIR)
+		printf("d");
+	else if (statbuf.st_mode & S_IFBLK)
+		printf("b");
+	else if (statbuf.st_mode & S_IFLNK)
+		printf("l");
+	else if (statbuf.st_mode & S_IFSOCK)
+		printf("s");
+	else if (statbuf.st_mode & S_IFWHT)
+		printf("w");
+	else
+		;
+}
+
+int filedata(const char *pathname) // call the filedata function with the parameter pathname 
+{ 
+	struct passwd *retval;
+	struct group *retval2;
+	char *timestr;
+	timestr = ft_strnew(26);
+    // Use octarray for determining if permission bits set 
+	static short octarray[9] = { 0400, 0200, 0100, 0040, \
+								 0020, 0010, 0004, 0002, 0001 };
+    static char perms[10] = "rwxrwxrwx";
+    struct stat statbuf;
+    char descrip[10];
+	ft_bzero(descrip, 10); //not sure if necessary; probably tho
+    int j;
+	j = 0;
+    if (stat(pathname, &statbuf) == -1) { 
+        fprintf(stderr, "Couldn't stat %s\n", pathname); //fprintf? wtf?
+        return (-1);
+    }
+    while (j < 9) 
+	{
+		if (statbuf.st_mode & octarray[j]) 
+            descrip[j] = perms[j];
+        else 
+            descrip[j] = '-';
+		j++;
+    }
+    descrip[9] = '\0'; // Make sure we have a string
+	lfiletype(statbuf);
+    printf("%s  ", descrip); 
+	printf("%d ", statbuf.st_nlink);
+	retval = getpwuid(statbuf.st_uid);
+	retval2 = getgrgid(statbuf.st_gid);
+	printf("%s ", retval->pw_name);
+	printf(" %s ", retval2->gr_name);
+	printf("%lld", statbuf.st_size);
+	timestr = ctime((&statbuf.st_atimespec.tv_sec));
+	timestr[16] = '\0';
+	printf(" %s ", timestr + 4);
+//    printf("%s\n", pathname);
+    return (0); 
+}
 
 void insrt( t_list **zoast, t_list *temp, char *dname)
 {
@@ -79,6 +146,8 @@ void printsopts(t_sopts *sopts)
 	printf("t:%d\n", sopts->time);
 }
 
+
+
 void rhelper(char *name, char *another)
 {
 	struct stat buffer;
@@ -92,14 +161,26 @@ void rhelper(char *name, char *another)
 	}
 }
 
-void printit(t_list *stuff)
+void printit(t_list *stuff, char *path)
 {
+	char *new;
+	new = NULL;
 	while (stuff->next)
 	{
+		new = ft_strdup(path);
+		new = ft_strjoin(new, "/");
+		new = ft_strjoin(new, (char*)stuff->content);
+		filedata(new);
 		printf("%s\n", stuff->content);
 		stuff = stuff->next;
+		free (new);
 	}
+	new = ft_strdup(path);
+	new = ft_strjoin(new, "/");
+	new = ft_strjoin(new, (char*)stuff->content);
+	filedata(new);
 	printf("%s\n\n", stuff->content);
+	free (new);
 }
 
 void ft_dirwalk(char *dir, void(*f)(char *, char *))
@@ -110,6 +191,7 @@ void ft_dirwalk(char *dir, void(*f)(char *, char *))
 	t_list *nay;
 	t_list *temp;
 
+	nay = NULL;
 	temp = NULL;
 	bool = 0;
 	if ((hmm = opendir(dir)) == NULL)
@@ -138,7 +220,7 @@ void ft_dirwalk(char *dir, void(*f)(char *, char *))
 	}
 	closedir(hmm);
 	if (bool == 1)
-		printit(nay);
+		printit(nay, dir);
 	if (bool == 1)
 	{
 		while (nay->next)
@@ -151,6 +233,8 @@ void ft_dirwalk(char *dir, void(*f)(char *, char *))
 	else
 		printf("\n");
 }
+
+
 
 int main(int argc, char *argv[])
 {
@@ -179,3 +263,4 @@ int main(int argc, char *argv[])
 	}
     return (26);
 }
+
