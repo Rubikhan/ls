@@ -6,13 +6,52 @@
 /*   By: smaddux <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/09 19:40:19 by smaddux           #+#    #+#             */
-/*   Updated: 2018/02/16 21:57:16 by smaddux          ###   ########.fr       */
+/*   Updated: 2018/02/27 16:22:51 by smaddux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../ft_ls.h"
 
 //set  value with "x = & S_IFMT" and u can use it later"
+
+/* t_list *oprd (void) */
+/* { */
+/*     struct dirent *b; */
+/*     struct stat s; */
+/*     void *a; */
+/* 	t_list *zoast; */
+/*     a = opendir("."); */
+
+
+/*     if (a == NULL) */
+/*     { */
+/*         printf("error\n"); */
+/*         return (NULL); */
+/*     } */
+/*     int bool = 0; */
+
+/*     t_list *temp; */
+
+/*     temp = NULL; */
+
+/*     while ((b = readdir(a)) != NULL) */
+/*     { */
+/*         stat((const char*)b->d_name, &s); */
+/*         if ((s.st_mode & S_IFMT) == S_IFDIR) //worked too with & S_IFDIR */
+/* 			; */
+/*         if (bool == 0) */
+/*         { */
+/*             bool = 1; */
+/*             zoast = ft_lstnew(b->d_name, ft_strlen(b->d_name)); */
+/*         } */
+/*         else */
+/*         { */
+/*             insrt(&zoast, temp, (char*)b->d_name); */
+/*         } */
+/*     } */
+/* 	closedir(a); */
+/* 	return (zoast); */
+/* } */
 
 void lfiletype(struct stat statbuf)
 {
@@ -79,11 +118,11 @@ int filedata(const char *pathname) // call the filedata function with the parame
     return (0); 
 }
 
-void insrt( t_list **zoast, t_list *temp, char *dname)
+void insrt(t_curr **zoast, t_curr *temp, char *dname)
 {
-    t_list *current;
-    temp = ft_lstnew(dname, ft_strlen(dname) + 1); //not sure if I need the +1 //FREE THIS
-    if (ft_strcmp((*zoast)->content, temp->content) > 0)
+    t_curr *current;
+    temp = ft_mlstnew(dname); //not sure if I need the +1 //FREE THIS
+    if (ft_strcmp((*zoast)->mname, temp->mname) > 0)
     {
         temp->next = *zoast;
         *zoast = temp;
@@ -91,51 +130,14 @@ void insrt( t_list **zoast, t_list *temp, char *dname)
     else
     {
         current = *zoast;
-        while(current->next != NULL && ft_strcmp(current->next->content, temp->content) < 0)
+        while(current->next != NULL && ft_strcmp(current->next->mname, temp->mname) < 0)
             current = current->next;
         temp->next = current->next;
         current->next = temp;
     }
 }
 
-t_list *oprd (void)
-{
-    struct dirent *b;
-    struct stat s;
-    void *a;
-	t_list *zoast;
-    a = opendir(".");
 
-
-    if (a == NULL)
-    {
-        printf("error\n");
-        return (NULL);
-    }
-    int bool = 0;
-
-    t_list *temp;
-
-    temp = NULL;
-
-    while ((b = readdir(a)) != NULL)
-    {
-        stat((const char*)b->d_name, &s);
-        if ((s.st_mode & S_IFMT) == S_IFDIR) //worked too with & S_IFDIR
-			;
-        if (bool == 0)
-        {
-            bool = 1;
-            zoast = ft_lstnew(b->d_name, ft_strlen(b->d_name));
-        }
-        else
-        {
-            insrt(&zoast, temp, (char*)b->d_name);
-        }
-    }
-	closedir(a);
-	return (zoast);
-}
 
 void printsopts(t_sopts *sopts)
 {
@@ -151,35 +153,49 @@ void printsopts(t_sopts *sopts)
 void rhelper(char *name, char *another)
 {
 	struct stat buffer;
+	char *newname;
+	newname = NULL;
+	int temp;
 
 	stat((const char*)name, &buffer);
 	if ((buffer.st_mode & S_IFMT) == S_IFDIR)
 	{
-		name = ft_strjoin(name, "/");
-		name = ft_strjoin(name, another);
-		ft_dirwalk(name, rhelper);
+		newname = ft_strnew(ft_strlen(name) + ft_strlen(another) + 2);
+		newname = ft_strcpy(newname, name);
+		temp = ft_strlen(name);
+		newname[temp] = '/';
+		newname[temp + 1] = '\0';
+		newname = ft_strcat(newname, another);
+		ft_dirwalk(newname, rhelper);
 	}
 }
 
-void printit(t_list *stuff, char *path)
+void printit(t_curr *stuff, char *path)
 {
 	char *new;
+	int temp;
 	new = NULL;
 	while (stuff->next)
 	{
-		new = ft_strdup(path);
-		new = ft_strjoin(new, "/");
-		new = ft_strjoin(new, (char*)stuff->content);
+		new = ft_strnew(ft_strlen(path) + ft_strlen(stuff->mname) + 2); // FREE?
+		new = ft_strcpy(new, path); // FREE? strjoinf?
+		temp = ft_strlen(path);
+		new[temp] = '/';
+		new[temp + 1] = '\0';
+		new = ft_strcat(new, stuff->mname);
 		filedata(new);
-		printf("%s\n", stuff->content);
+		printf("%s\n", stuff->mname);
 		stuff = stuff->next;
 		free (new);
 	}
-	new = ft_strdup(path);
-	new = ft_strjoin(new, "/");
-	new = ft_strjoin(new, (char*)stuff->content);
+	new = ft_strnew(ft_strlen(path) + ft_strlen(stuff->mname) + 2);
+	new = ft_strcpy(new, path); 
+	temp = ft_strlen(path);
+	new[temp] = '/';
+	new[temp + 1] = '\0';
+	new = ft_strcat(new, stuff->mname);
 	filedata(new);
-	printf("%s\n\n", stuff->content);
+	printf("%s\n\n", stuff->mname);
 	free (new);
 }
 
@@ -188,8 +204,8 @@ void ft_dirwalk(char *dir, void(*f)(char *, char *))
 	struct dirent *sdp;
 	void *hmm;
 	int bool;
-	t_list *nay;
-	t_list *temp;
+	t_curr *nay;
+	t_curr *temp;
 
 	nay = NULL;
 	temp = NULL;
@@ -210,7 +226,7 @@ void ft_dirwalk(char *dir, void(*f)(char *, char *))
 			if (bool == 0)
 			{
 				bool = 1;
-				nay = ft_lstnew(sdp->d_name, ft_strlen(sdp->d_name));
+				nay = ft_mlstnew(sdp->d_name);
 			}
 			else
 			{
@@ -220,15 +236,16 @@ void ft_dirwalk(char *dir, void(*f)(char *, char *))
 	}
 	closedir(hmm);
 	if (bool == 1)
+//
 		printit(nay, dir);
 	if (bool == 1)
 	{
 		while (nay->next)
 		{
-			f(dir, nay->content);
+			f(dir, nay->mname);
 			nay = nay->next;
 		}
-		f(dir, nay->content);
+		f(dir, nay->mname);
 	}
 	else
 		printf("\n");

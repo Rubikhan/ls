@@ -6,7 +6,7 @@
 /*   By: smaddux <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/12 16:04:23 by smaddux           #+#    #+#             */
-/*   Updated: 2017/12/18 10:20:47 by smaddux          ###   ########.fr       */
+/*   Updated: 2018/02/27 15:25:25 by smaddux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 # include <stdlib.h>
 # include <string.h>
 # include <unistd.h>
+# include <sys/stat.h> //FOR LS STAT STRUCT IN T_CURR
 
 # define BUFF_SIZE 10000
 
@@ -25,6 +26,19 @@ typedef	struct		s_list
 	size_t			content_size;
 	struct s_list	*next;
 }					t_list;
+
+typedef struct          s_curr
+{
+	char *mpath;
+	char *mname;
+	struct stat mstatbuf;
+	char mfiletype;
+	char *mperms;
+	struct s_curr   *mdirs;
+	struct s_curr   *mfiles;
+	int     mid;
+	struct s_curr   *next;
+}                                       t_curr;
 
 int					ft_abs(int num);
 int					ft_atoi(const char *str);
@@ -51,6 +65,8 @@ void				*ft_memchr(const void *s, int c, size_t n);
 int					ft_memcmp(const void *s1, const void *s2, size_t n);
 void				*ft_memcpy(void *dst, const void *src, size_t n);
 void				ft_memdel(void **ap);
+void				ft_mlstadd(t_curr **alst, t_curr *new);
+t_curr				*ft_mlstnew(char *content);
 void				*ft_memmove(void *dst, const void *src, size_t len);
 void				*ft_memset(void *b, int c, size_t len);
 void				ft_putchar(char c);
