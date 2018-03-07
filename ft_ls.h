@@ -6,7 +6,7 @@
 /*   By: smaddux <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/04 22:51:21 by smaddux           #+#    #+#             */
-/*   Updated: 2018/02/27 15:22:25 by smaddux          ###   ########.fr       */
+/*   Updated: 2018/02/28 19:56:22 by smaddux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,8 +53,8 @@ int	ft_getopt1(int argc, char *argv[], char *soptstring);
 int ft_getopt2(int argc, char *argv[], char *soptstring);
 t_sopts *assignsopts(int c, t_sopts *sopts);
 t_sopts *soptszero(t_sopts *sopts);
-void rhelper(char *name, char *another);
-void ft_dirwalk(char *dir, void(*f)(char *, char *));
+void rhelper(char *name, char *another, t_curr *parent, int bool);
+void ft_dirwalk(char *dir, void(*f)(char *, char *, t_curr *, int), t_curr *ultlst);
 
 int soptind;
 
