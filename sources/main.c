@@ -6,7 +6,7 @@
 /*   By: smaddux <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/09 19:40:19 by smaddux           #+#    #+#             */
-/*   Updated: 2018/03/06 16:45:34 by smaddux          ###   ########.fr       */
+/*   Updated: 2018/03/13 09:33:26 by smaddux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,7 @@ int filedata(const char *pathname, t_curr *thething)
 void insrt(t_curr **zoast, t_curr *temp, char *dname)
 {
     t_curr *current;
-    temp = ft_mlstnew(dname); //not sure if I need the +1 //FREE THIS
+    temp = ft_mlstnew(dname); //FREE THIS
     if (ft_strcmp((*zoast)->mname, temp->mname) > 0)
     {
         temp->next = *zoast;
@@ -120,13 +120,13 @@ void rhelper(char *name, char *another, t_curr *parent, int bool)
 	if ((buffer.st_mode & S_IFMT) == S_IFDIR)
 	{
 		bool = 1;
-		newult = ft_mlstnew(newname); //
-		newult->mname = ft_strnew(ft_strlen(name) + ft_strlen(another) + 2);
+		newult = ft_mlstnew(newname); //FREE
+		newult->mname = ft_strnew(ft_strlen(name) + ft_strlen(another) + 2); //FREE
 		newult->mname = ft_strcpy(newult->mname, name);
 		temp = ft_strlen(name);
 		newult->mname[temp] = '/';
 		newult->mname[temp + 1] = '\0';
-		newult->mname = ft_strjoinf(newult->mname, another);
+		newult->mname = ft_strjoinf(newult->mname, another); //FREE
 		if (bool == 0)
 		{
 			newult->mdirs = NULL;
@@ -149,17 +149,17 @@ void printit(t_curr *stuff, char *path)
 	while (stuff->next)
 	{
 		new = ft_strnew(ft_strlen(path) + ft_strlen(stuff->mname) + 2); // FREE?
-		new = ft_strcpy(new, path); // FREE? strjoinf?
+		new = ft_strcpy(new, path); 
 		temp = ft_strlen(path);
 		new[temp] = '/';
 		new[temp + 1] = '\0';
-		new = ft_strjoinf(new, stuff->mname);
+		new = ft_strjoinf(new, stuff->mname); //FREE although strjoinf should?
 		filedata(new, stuff);
 		printf("%s\n", stuff->mname);
 		stuff = stuff->next;
 		free(new);
 	}
-	new = ft_strnew(ft_strlen(path) + ft_strlen(stuff->mname) + 2);
+	new = ft_strnew(ft_strlen(path) + ft_strlen(stuff->mname) + 2); //FREE
 	new = ft_strcpy(new, path); 
 	temp = ft_strlen(path);
 	new[temp] = '/';
@@ -213,7 +213,7 @@ void ft_dirwalk(char *dir, void(*f)(char *, char *, t_curr *, int), t_curr *ultl
 			if (bool == 0)
 			{
 				bool = 1;
-				nay = ft_mlstnew(sdp->d_name);
+				nay = ft_mlstnew(sdp->d_name); //FREE THIS
 			}
 			else
 			{
@@ -261,7 +261,7 @@ int main(int argc, char *argv[])
 	t_sopts *sopts;
 	int c;
 	t_curr *ultlst;
-	ultlst = malloc(sizeof(t_curr) * 2);
+	ultlst = malloc(sizeof(t_curr) * 2); //FREE
 
 	soptind = 1;
 	sopts = malloc(sizeof(t_sopts*) * (2)); //FREE THIS
@@ -283,6 +283,8 @@ int main(int argc, char *argv[])
 	{
 		ft_dirwalk(".", rhelper, ultlst);
 	}
+	free(sopts);
+	free(ultlst);
     return (26);
 }
 

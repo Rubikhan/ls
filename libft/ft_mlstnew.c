@@ -6,7 +6,7 @@
 /*   By: smaddux <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/12 14:23:20 by smaddux           #+#    #+#             */
-/*   Updated: 2018/02/27 15:01:16 by smaddux          ###   ########.fr       */
+/*   Updated: 2018/03/13 10:37:26 by smaddux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ t_curr	*ft_mlstnew(char *content)
 	}
 	else
 	{
-		fresh->mname = malloc(sizeof(char) * ft_strlen(content));
+		fresh->mname = malloc(sizeof(char) * (ft_strlen(content) + 1));
 		if (fresh->mname == NULL)
 		{
 			free(fresh);
