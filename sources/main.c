@@ -6,7 +6,7 @@
 /*   By: smaddux <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/09 19:40:19 by smaddux           #+#    #+#             */
-/*   Updated: 2018/03/13 09:33:26 by smaddux          ###   ########.fr       */
+/*   Updated: 2018/03/15 19:50:24 by smaddux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,7 +112,9 @@ void rhelper(char *name, char *another, t_curr *parent, int bool)
 {
 	struct stat buffer;
 	char *newname;
+	char *newname2;
 	newname = NULL;
+	newname2 = NULL;
 	int temp;
 	t_curr *newult;
 
@@ -120,13 +122,15 @@ void rhelper(char *name, char *another, t_curr *parent, int bool)
 	if ((buffer.st_mode & S_IFMT) == S_IFDIR)
 	{
 		bool = 1;
-		newult = ft_mlstnew(newname); //FREE
-		newult->mname = ft_strnew(ft_strlen(name) + ft_strlen(another) + 2); //FREE
-		newult->mname = ft_strcpy(newult->mname, name);
+		newname = ft_strnew(ft_strlen(name) + ft_strlen(another) + 2); //FREE
+		newname = ft_strcpy(newname, name);
 		temp = ft_strlen(name);
-		newult->mname[temp] = '/';
-		newult->mname[temp + 1] = '\0';
-		newult->mname = ft_strjoinf(newult->mname, another); //FREE
+		newname[temp] = '/';
+		newname[temp + 1] = '\0';
+		newname2 = ft_strjoin(newname, another); //FREE
+		newult = ft_mlstnew(newname2); //FREE AKJALSKJASLFKJ
+		free(newname);
+		free(newname2);
 		if (bool == 0)
 		{
 			newult->mdirs = NULL;
@@ -139,6 +143,7 @@ void rhelper(char *name, char *another, t_curr *parent, int bool)
 		}
 		ft_dirwalk(newult->mname, rhelper, parent->mdirs);
 	}
+
 }
 
 void printit(t_curr *stuff, char *path)
@@ -146,6 +151,8 @@ void printit(t_curr *stuff, char *path)
 	char *new;
 	int temp;
 	new = NULL;
+	char *new2;
+	new2 = NULL;
 	while (stuff->next)
 	{
 		new = ft_strnew(ft_strlen(path) + ft_strlen(stuff->mname) + 2); // FREE?
@@ -153,28 +160,32 @@ void printit(t_curr *stuff, char *path)
 		temp = ft_strlen(path);
 		new[temp] = '/';
 		new[temp + 1] = '\0';
-		new = ft_strjoinf(new, stuff->mname); //FREE although strjoinf should?
-		filedata(new, stuff);
+		new2 = ft_strjoin(new, stuff->mname); //FREE although strjoinf should?
+		filedata(new2, stuff);
 		printf("%s\n", stuff->mname);
 		stuff = stuff->next;
 		free(new);
+		free(new2);
 	}
 	new = ft_strnew(ft_strlen(path) + ft_strlen(stuff->mname) + 2); //FREE
 	new = ft_strcpy(new, path); 
 	temp = ft_strlen(path);
 	new[temp] = '/';
 	new[temp + 1] = '\0';
-	new = ft_strjoinf(new, stuff->mname);
+	new2 = ft_strjoin(new, stuff->mname);
 	filedata(new, stuff);
 	printf("%s\n\n", stuff->mname);
 	free(new);
+	free(new2);
 }
 
 void freefiles(t_curr *nay)
 {
+	
 	while(nay->next)
 	{
 		free(nay->mname);
+		free(nay);
 		nay = nay->next;
 	}
 	free(nay->mname);
@@ -242,6 +253,7 @@ void ft_dirwalk(char *dir, void(*f)(char *, char *, t_curr *, int), t_curr *ultl
 		{
 			f(dir, ultlst->mfiles->mname, ultlst, 0);
 			freefiles(nay);
+			freefiles(ultlst->mdirs);
 		}
 		else
 		{
@@ -251,7 +263,10 @@ void ft_dirwalk(char *dir, void(*f)(char *, char *, t_curr *, int), t_curr *ultl
 		}
 	}
 	else
+	{
 		printf("\n");
+	}
+
 }
 
 
